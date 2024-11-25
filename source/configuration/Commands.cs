@@ -10,6 +10,7 @@ namespace Configuration
     {
         public static readonly List<ApplicationCommandProperties> commands = new()
         {
+            // globalement du test faudra suppr 
             new SlashCommandBuilder()
                 .WithName("say")
                 .WithDescription("Repeats the input message.")
