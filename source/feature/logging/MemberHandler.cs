@@ -7,7 +7,7 @@ using Discord.WebSocket;
 
 namespace Logging
 {
-    public class JoinQuitHandler
+    public class MemberHandler
     {
         public static async Task LogUserJoined(SocketGuildUser user)
         {

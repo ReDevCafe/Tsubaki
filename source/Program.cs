@@ -26,12 +26,7 @@ public class Program
         }
 
         d_config = new DiscordSocketConfig {
-            GatewayIntents = GatewayIntents.Guilds
-                    | GatewayIntents.GuildBans
-                    | GatewayIntents.All
-                    | GatewayIntents.GuildMessages
-                    | GatewayIntents.GuildMessageReactions
-                    | GatewayIntents.MessageContent,
+            GatewayIntents = GatewayIntents.All, // un peu la flemme mais apres on pourra def les vrai autorisations 
             MessageCacheSize = configuration.CacheSize
         };
 

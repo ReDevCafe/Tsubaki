@@ -12,12 +12,12 @@ namespace Register
             client.UserBanned += Logging.BanHandler.LogUserBanned;
             client.UserUnbanned += Logging.BanHandler.LogUserUnbanned;
 
-            client.UserUpdated += Logging.UserChangeHandler.LogUserUpdated;
+            client.UserUpdated += Logging.UserUpdateHandler.LogUserUpdated;
 
             client.InviteCreated += Logging.InviteHandler.LogInviteCreated;
 
-            client.UserJoined += Logging.JoinQuitHandler.LogUserJoined;
-            client.UserLeft += Logging.JoinQuitHandler.LogUserLeft;
+            client.UserJoined += Logging.MemberHandler.LogUserJoined;
+            client.UserLeft += Logging.MemberHandler.LogUserLeft;
         }
     }
 }

@@ -5,7 +5,7 @@ using Discord.WebSocket;
 
 namespace Logging
 {
-    public class UserChangeHandler
+    public class UserUpdateHandler
     {
         public static async Task LogUserUpdated(SocketUser before, SocketUser after)
         {
