@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Command;
 using Configuration;
 using Discord;
 using Discord.WebSocket;
+using Maintenance;
 using Newtonsoft.Json;
 
 public class Program 
@@ -14,14 +17,17 @@ public class Program
     public static Config configuration;
     public static ITextChannel logChannel;
 
+    protected static CommandManager t_commandManager = new();
+
     public static async Task Main()
     {
         // Load configuration
         configuration = JsonConvert.DeserializeObject<Config>(File.ReadAllText("config.json"));
+        Logger.Instance.Configure("logs.txt", configuration.MinLogLevel, configuration.LogToConsole);
 
         if (configuration.CacheSize < 0)
         {
-            Console.WriteLine("No cache size found in config.json");
+            Logger.Instance.Log(LogLevel.Info, "Cache size must be > 0");
             return;
         }
 
@@ -32,41 +38,44 @@ public class Program
 
         if (string.IsNullOrEmpty(configuration.Token))
         {
-            Console.WriteLine("No token found in config.json");
+            Logger.Instance.Log(LogLevel.Info, "Token is empty");
             return;
         }
 
         d_client = new DiscordSocketClient(d_config);
-        
+        d_client.SlashCommandExecuted += t_commandManager.HandleCommandAsync;
         d_client.Log += LogAsync;
         d_client.Ready += OnReadyAsync;
-        d_client.SlashCommandExecuted += Commands.SlashCommandHandler;
-
+        
         await d_client.LoginAsync(TokenType.Bot, configuration.Token);
         await d_client.StartAsync();
-
+        
         logChannel = await d_client.GetChannelAsync(configuration.LogChannelId) as ITextChannel;
         Register.EventRegistry.RegisterEvents(d_client);
+
+        d_client.Disconnected += OnDisconnectedAsync;
 
         await Task.Delay(-1);
     }
 
     private static async Task OnReadyAsync()
     {
-        ApplicationCommandProperties[] commands = Commands.commands.ToArray();
-        if(commands.Length == 0 || commands == null) 
-        {
-            await LogAsync(new LogMessage(LogSeverity.Warning, "Startup", "No slash commands found."));
-            return;
-        }
+        IReadOnlyList<ApplicationCommandProperties> globalCommands = t_commandManager.GetCommands();
+        foreach (ApplicationCommandProperties command in globalCommands)
+            await d_client.Rest.CreateGlobalCommand(command);
 
-        await d_client.BulkOverwriteGlobalApplicationCommandsAsync(commands);
-        await LogAsync(new LogMessage(LogSeverity.Info, "Startup", "Slash commands registered."));
+        Logger.Instance.Log(LogLevel.Info, "Slash command registered");
+    }
+
+    private static async Task OnDisconnectedAsync(Exception exception)
+    {
+        Logger.Instance.Dispose();
+        await Task.CompletedTask;
     }
 
     private static Task LogAsync(LogMessage log)
     {
-        Console.WriteLine(log);
+        Logger.Instance.Log(LogLevel.Debug, log.Message);
         return Task.CompletedTask;
     }
 }

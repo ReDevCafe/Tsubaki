@@ -1,4 +1,5 @@
 using Discord.WebSocket;
+using Maintenance;
 
 namespace Register 
 {
@@ -18,6 +19,8 @@ namespace Register
 
             client.UserJoined += Logging.MemberHandler.LogUserJoined;
             client.UserLeft += Logging.MemberHandler.LogUserLeft;
+
+            Logger.Instance.Log(LogLevel.Info, "Events registered");
         }
     }
 }
