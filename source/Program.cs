@@ -14,10 +14,10 @@ public class Program
 {
     public static DiscordSocketClient d_client;
     public static DiscordSocketConfig d_config;
-    public static Config configuration;
     public static ITextChannel logChannel;
-
     protected static CommandManager t_commandManager = new();
+    private static Config configuration;
+
 
     public static async Task Main()
     {
