@@ -1,64 +1,65 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Rest;
 using Discord.WebSocket;
 
 namespace Logging
 {
-    public class MemberHandler
+    public class MemberJoinHandler : EventHandlerBase
     {
-        public static async Task LogUserJoined(SocketGuildUser user)
+        public override async Task HandleEventAsync(params object[] args)
         {
-             if (user == null)
+            if (args.Length == 1 && args[0] is SocketGuildUser user)
+            {
+                if (user == null)
                 return;
 
-            var embed = new EmbedBuilder()
-                .WithAuthor(new EmbedAuthorBuilder()
-                    .WithName($"{user.Username}")
-                    .WithIconUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                    .WithUrl($"https://discordlookup.com/user/{user.Id}")
-                )
-                .WithTitle($"{user.Username} Joined")
-                .WithDescription($"<@{user.Id}> has joined the guild.\n\n" +
-                                 $"**Account Created:** <t:{user.CreatedAt.ToUnixTimeSeconds()}:R>\n" +
-                                 $"**Joined At:** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R>")
-                .WithThumbnailUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                .WithColor(Color.Green)
-                .WithFooter(new EmbedFooterBuilder()
-                    .WithIconUrl(Program.d_client.CurrentUser.GetAvatarUrl())
-                    .WithText($"User ID: {user.Id}")
-                )
-                .WithTimestamp(DateTimeOffset.Now)
-                .Build();
+                var embed = CreateEmbed(
+                    $"{user.Username} Joined",
+                    $"<@{user.Id}> has joined the guild.\n\n" +
+                    $"**Account Created:** <t:{user.CreatedAt.ToUnixTimeSeconds()}:R>\n" +
+                    $"**Joined At:** <t:{DateTimeOffset.Now.ToUnixTimeSeconds()}:R>",
+                    user,
+                    Color.Green,
+                    true
+                ).Build();
 
-            await Program.logChannel.SendMessageAsync(embed: embed);
+                await LogChannel.SendMessageAsync(embed: embed);
+            }
         }
 
-        public static async Task LogUserLeft(SocketGuild guild, SocketUser user)
+        public static async Task LogMemberJoin(SocketUser user)
         {
-            if (user == null || guild == null)
+            var handler = new MemberJoinHandler();
+            await handler.HandleEventAsync(user);
+        }
+    }
+
+    public class MemberLeftHandler : EventHandlerBase
+    {
+        public override async Task HandleEventAsync(params object[] args)
+        {
+            if (args.Length == 2 && args[0] is SocketGuild guild && args[1] is SocketUser user)
+            {
+                if (user == null || guild == null)
                 return;
 
-            var embed = new EmbedBuilder()
-                .WithAuthor(new EmbedAuthorBuilder()
-                    .WithName($"{user.Username}")
-                    .WithIconUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                    .WithUrl($"https://discordlookup.com/user/{user.Id}")
-                )
-                .WithTitle($"{user.Username} left")
-                .WithDescription($"User <@{user.Id}> has left the guild.")
-                .WithThumbnailUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
-                .WithColor(Color.Red)
-                .WithFooter(new EmbedFooterBuilder()
-                    .WithIconUrl(Program.d_client.CurrentUser.GetAvatarUrl())
-                    .WithText($"User ID: {user.Id}")
-                )
-                .WithTimestamp(DateTimeOffset.Now)
-                .Build();
+                var embed = CreateEmbed(
+                    $"{user.Username} Left",
+                    $"User <@{user.Id}> has left the guild.",
+                    user,
+                    Color.Red,
+                    true
+                ).Build();
 
-            await Program.logChannel.SendMessageAsync(embed: embed);
+                await LogChannel.SendMessageAsync(embed: embed);
+            }
+        }
+
+        public static async Task LogMemberLeft(SocketGuild guild, SocketUser user)
+        {
+            var handler = new MemberLeftHandler();
+            await handler.HandleEventAsync(guild, user);
         }
     }
 }

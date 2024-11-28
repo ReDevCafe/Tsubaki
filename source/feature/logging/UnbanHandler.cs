@@ -6,26 +6,26 @@ using Discord.WebSocket;
 
 namespace Logging 
 {
-    public class BanHandler : EventHandlerBase
+    public class UnbanHandler : EventHandlerBase
     {
         public override async Task HandleEventAsync(params object[] args)
         {
             if (args[0] is SocketUser user && args[1] is SocketGuild guild)
             {
                 var embed = CreateEmbed(
-                    "User Banned",
-                    $"<@{user.Id}> has been banned",
+                    "User unbanned",
+                    $"<@{user.Id}> has been unbanned",
                     user,
-                    Color.Purple
+                    Color.Green
                 ).Build();
 
                 await LogChannel.SendMessageAsync(embed: embed);
             }
         }
 
-        public static async Task LogUserBanned(SocketUser user, SocketGuild guild)
+        public static async Task LogUserUnbanned(SocketUser user, SocketGuild guild)
         {
-            var handler = new BanHandler();
+            var handler = new UnbanHandler();
             await handler.HandleEventAsync(user, guild);
         }
     }

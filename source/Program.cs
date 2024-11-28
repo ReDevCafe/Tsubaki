@@ -15,19 +15,19 @@ public class Program
     public static DiscordSocketClient d_client;
     public static DiscordSocketConfig d_config;
     public static ITextChannel logChannel;
+    
     protected static CommandManager t_commandManager = new();
-    private static Config configuration;
+    protected static ConfigFile configuration;
 
 
     public static async Task Main()
     {
-        // Load configuration
-        configuration = JsonConvert.DeserializeObject<Config>(File.ReadAllText("config.json"));
+        configuration = JsonConvert.DeserializeObject<ConfigFile>(File.ReadAllText("config.json"));
         Logger.Instance.Configure("logs.txt", configuration.MinLogLevel, configuration.LogToConsole);
 
         if (configuration.CacheSize < 0)
         {
-            Logger.Instance.Log(LogLevel.Info, "Cache size must be > 0");
+            Logger.Instance.Log(LogLevel.Fatal, "Cache size must be > 0");
             return;
         }
 
@@ -38,7 +38,7 @@ public class Program
 
         if (string.IsNullOrEmpty(configuration.Token))
         {
-            Logger.Instance.Log(LogLevel.Info, "Token is empty");
+            Logger.Instance.Log(LogLevel.Fatal, "Token is empty");
             return;
         }
 
@@ -75,7 +75,7 @@ public class Program
 
     private static Task LogAsync(LogMessage log)
     {
-        Logger.Instance.Log(LogLevel.Debug, log.Message);
+        Logger.Instance.Log(LogLevel.Info, log.Message);
         return Task.CompletedTask;
     }
 }

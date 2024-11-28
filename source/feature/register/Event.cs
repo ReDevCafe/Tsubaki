@@ -7,20 +7,20 @@ namespace Register
     {
         public static void RegisterEvents(DiscordSocketClient client)
         {
-            client.MessageUpdated += Logging.MessageHandler.LogMessageUpdated;
-            client.MessageDeleted += Logging.MessageHandler.LogMessageDeleted;
+            client.MessageUpdated += Logging.MessageUpdateHandler.LogMessageUpdate;
+            client.MessageDeleted += Logging.MessageDeleteHandler.LogMessageDelete;
 
             client.UserBanned += Logging.BanHandler.LogUserBanned;
-            client.UserUnbanned += Logging.BanHandler.LogUserUnbanned;
+            client.UserUnbanned += Logging.UnbanHandler.LogUserUnbanned;
 
-            client.UserUpdated += Logging.UserUpdateHandler.LogUserUpdated;
+            client.UserUpdated += Logging.UserUpdateHandler.LogUserUpdate;
 
             client.InviteCreated += Logging.InviteHandler.LogInviteCreated;
 
-            client.UserJoined += Logging.MemberHandler.LogUserJoined;
-            client.UserLeft += Logging.MemberHandler.LogUserLeft;
+            client.UserJoined += Logging.MemberJoinHandler.LogMemberJoin;
+            client.UserLeft += Logging.MemberLeftHandler.LogMemberLeft;
 
-            Logger.Instance.Log(LogLevel.Info, "Events registered");
+            Logger.Instance.Log(LogLevel.Debug, "Events registered");
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Command
         public CommandManager()
         {
             RegisterCommand(new SayCommand());
+            RegisterCommand(new UserInfoCommand());
         }
 
         private void RegisterCommand(ICommand command)
@@ -32,21 +33,7 @@ namespace Command
 
         public IReadOnlyList<ApplicationCommandProperties> GetCommands()
         {
-            return commands.Values.Select(c => CreateCommandDefinition(c)).ToList();
-        }
-
-        private ApplicationCommandProperties CreateCommandDefinition(ICommand command)
-        {
-            return command switch
-            {
-                SayCommand => new SlashCommandBuilder()
-                    .WithName("say")
-                    .WithDescription("Repeats the input message.")
-                    .AddOption("message", ApplicationCommandOptionType.String, "Message to repeat", isRequired: true)
-                    .Build(),
-
-                _ => throw new NotImplementedException("Command definition not implemented."),
-            };
+            return commands.Values.Select(c => c.CommandProperties).ToList();
         }
     }
 }

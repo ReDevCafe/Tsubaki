@@ -2,7 +2,7 @@ using Maintenance;
 
 namespace Configuration
 {
-    class Config
+    public class ConfigFile
     {
         public string Token { get; set; }
         public ulong GuildId { get; set; }
