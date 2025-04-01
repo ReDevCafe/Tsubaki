@@ -11,5 +11,9 @@ namespace Configuration
 
         public LogLevel MinLogLevel { get; set; }
         public bool LogToConsole { get; set; }
+
+        public string MongoHost { get; set; }
+        public string MongoDatabase { get; set; }
+        public string MongoCollection { get; set; }
     }
 }
