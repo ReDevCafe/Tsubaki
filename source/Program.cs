@@ -15,10 +15,10 @@ public class Program
     public static DiscordSocketClient d_client;
     public static DiscordSocketConfig d_config;
     public static ITextChannel logChannel;
+    public static Database database;
     
     protected static CommandManager t_commandManager = new();
     protected static ConfigFile configuration;
-
 
     public static async Task Main()
     {
@@ -53,6 +53,8 @@ public class Program
         
         logChannel = await d_client.GetChannelAsync(configuration.LogChannelId) as ITextChannel;
         Register.EventRegistry.RegisterEvents(d_client);
+
+        database = new(configuration);
 
         d_client.Disconnected += OnDisconnectedAsync;
 
