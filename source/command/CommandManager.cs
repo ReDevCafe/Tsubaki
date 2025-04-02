@@ -22,6 +22,7 @@ namespace Command
             RegisterCommand(new Kick());
             RegisterCommand(new Ban());
             
+            RegisterCommand(new ServerSetup());            
             RegisterCommand(new MongoDebug());
             RegisterCommand(new ExperienceInfo());
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Configuration;
 using Maintenance;
@@ -56,7 +57,7 @@ public class Database
         return guildData;
     }
 
-    public void UpdateMongoUserData(ulong guildId, ulong userId, UserData data)
+    public void UpdateMongoUserData(ulong guildId, string userId, UserData data)
     {
         var filter = Builders<GuildData>.Filter.Eq("_id", guildId);
 
@@ -69,4 +70,19 @@ public class Database
     }
 
 
+
+    public void UpdateMongoGuildData(ulong guildId, GuildData data)
+    {
+        try
+        {
+            var filter = Builders<GuildData>.Filter.Eq("_id", guildId);
+        mongoCollection.ReplaceOne(filter, data);
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+            throw;
+        }
+        
+    }
 }
