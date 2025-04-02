@@ -23,8 +23,14 @@ namespace Logging
                     Color.Green,
                     true
                 ).Build();
+                    
+                ulong id = Database.Instance.Guild(user.Guild.Id).LogChannelId;
+                ITextChannel logChannel = user.Guild.GetTextChannel(id);
+                Database.Instance.Guild(user.Guild.Id).addUser(user.Id);
 
-                await LogChannel.SendMessageAsync(embed: embed);
+                if (logChannel != null)
+                    await logChannel.SendMessageAsync(embed: embed);
+
             }
         }
 
@@ -52,7 +58,8 @@ namespace Logging
                     true
                 ).Build();
 
-                await LogChannel.SendMessageAsync(embed: embed);
+                ulong id = Database.Instance.Guild(guild.Id).LogChannelId;
+                await guild.GetTextChannel(id).SendMessageAsync(embed: embed);
             }
         }
 

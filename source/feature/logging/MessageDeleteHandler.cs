@@ -21,7 +21,12 @@ namespace Logging
                     Color.Red
                 ).WithUrl(message.GetJumpUrl()).Build();
 
-                await LogChannel.SendMessageAsync(embed: embed);
+                if(message.Channel is not IGuildChannel channel) return;
+
+                ulong id = Database.Instance.Guild(channel.GuildId).LogChannelId;
+                ITextChannel logChannel = await channel.Guild.GetTextChannelAsync(id);
+                
+                await logChannel.SendMessageAsync(embed: embed);
             }
         }
 

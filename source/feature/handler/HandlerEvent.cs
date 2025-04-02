@@ -8,7 +8,6 @@ namespace Logging
     public abstract class EventHandlerBase
     {
         protected static DiscordSocketClient Client => Program.d_client;
-        protected static ITextChannel LogChannel => Program.logChannel;
 
         public abstract Task HandleEventAsync(params object[] args);
 
