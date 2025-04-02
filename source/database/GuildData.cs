@@ -2,25 +2,34 @@ using System.Collections.Generic;
 using Discord;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson.Serialization.Options;
 
 public class GuildData 
 {
     [BsonId]
     public ulong GuildID { get; set; }
 
+    [BsonElement("LogChannelId")]
+    public ulong LogChannelId { get; set; } = 0;
+
+    [BsonElement("LevelChannelId")]
+    public ulong LevelChannelId { get; set; } = 0;
+
     [BsonElement("Users")]
-    public Dictionary<ulong, UserData> Users = new();
+    [BsonDictionaryOptions(DictionaryRepresentation.Document)]
+    public Dictionary<string, UserData> Users = new();
+
 
     public UserData User(ulong userID) => 
-        Users.TryGetValue(userID, out UserData user) 
+        Users.TryGetValue(userID.ToString(), out UserData user) 
         ? user 
         : null;
 
     public void addUser(ulong userID)
     {
+        string userIdStr = userID.ToString(); // Convert ulong to string
         UserData user = new UserData();
-
-        Users.Add(userID, user);
-        Database.Instance.UpdateMongoUserData(GuildID, userID, user);
+        Users[userIdStr] = user;
+        Database.Instance.UpdateMongoUserData(GuildID, userIdStr, user);
     }
 }

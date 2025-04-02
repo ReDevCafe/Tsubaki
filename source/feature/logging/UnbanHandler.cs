@@ -19,7 +19,9 @@ namespace Logging
                     Color.Green
                 ).Build();
 
-                await LogChannel.SendMessageAsync(embed: embed);
+
+                ulong id = Database.Instance.Guild(guild.Id).LogChannelId;
+                await guild.GetTextChannel(id).SendMessageAsync(embed: embed);
             }
         }
 

@@ -14,11 +14,10 @@ public class Program
 {
     public static DiscordSocketClient d_client;
     public static DiscordSocketConfig d_config;
-    public static ITextChannel logChannel;
     public static Database database;
+    public static ConfigFile configuration;
     
     protected static CommandManager t_commandManager = new();
-    protected static ConfigFile configuration;
 
     public static async Task Main()
     {
@@ -47,13 +46,12 @@ public class Program
         d_client.Log += LogAsync;
         d_client.Ready += OnReadyAsync;
         
+        database = new(configuration);
+
         await d_client.LoginAsync(TokenType.Bot, configuration.Token);
         await d_client.StartAsync();
         
-        logChannel = await d_client.GetChannelAsync(configuration.LogChannelId) as ITextChannel;
         Register.EventRegistry.RegisterEvents(d_client);
-
-        database = new(configuration);
 
         d_client.Disconnected += OnDisconnectedAsync;
 

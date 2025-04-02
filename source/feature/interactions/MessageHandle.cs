@@ -22,20 +22,20 @@ namespace Interaction
             if (user == null) return;
 
             bool asLevelUp = user.experience.AddExp((ulong) Math.Round(Math.Log(userMessage.Content.Length + 1) * 10));
-            Database.Instance.UpdateMongoUserData(guild.GuildID, message.Author.Id, user);
+            Database.Instance.UpdateMongoUserData(guild.GuildID, message.Author.Id.ToString(), user);
 
             if(!asLevelUp) return;
+            if(guild.LevelChannelId == 0) return;
 
             int level = user.experience.Level;
-            ulong fuckingTestREMOVEIFPULLREQUEST = (ulong) Math.Round((100 * Math.Pow(level, 1.8) + 100) - (100 * Math.Pow((level-1), 1.8) + 100));
             var embed = CreateEmbed(
                 $"Waw level uuuuuup",
-                $"Level {level-1} -> {level} 👑 (next level in {fuckingTestREMOVEIFPULLREQUEST})",
+                $"Level {level-1} -> {level} 👑",
                 message.Author,
                 Color.Gold
             ).Build();
 
-            await message.Channel.SendMessageAsync(embed: embed);
+            await guildChannel.Guild.GetTextChannel(guild.LevelChannelId).SendMessageAsync(embed: embed);
         }
 
         public static async Task InteractionMessageHandle(SocketMessage message)

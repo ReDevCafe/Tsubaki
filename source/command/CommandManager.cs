@@ -16,7 +16,8 @@ namespace Command
         {
             RegisterCommand(new SayCommand());
             RegisterCommand(new UserInfoCommand());
-            
+
+            RegisterCommand(new ServerSetup());            
             RegisterCommand(new MongoDebug());
             RegisterCommand(new ExperienceInfo());
         }
