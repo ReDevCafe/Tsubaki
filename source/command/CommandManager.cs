@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Command.Release;
 using Command.Test;
 using Discord;
 using Discord.WebSocket;
@@ -16,6 +17,10 @@ namespace Command
         {
             RegisterCommand(new SayCommand());
             RegisterCommand(new UserInfoCommand());
+
+            RegisterCommand(new Mute());
+            RegisterCommand(new Kick());
+            RegisterCommand(new Ban());
         }
 
         private void RegisterCommand(ICommand command)

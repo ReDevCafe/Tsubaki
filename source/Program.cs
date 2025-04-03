@@ -43,6 +43,7 @@ public class Program
         }
 
         d_client = new DiscordSocketClient(d_config);
+        
         d_client.SlashCommandExecuted += t_commandManager.HandleCommandAsync;
         d_client.Log += LogAsync;
         d_client.Ready += OnReadyAsync;
@@ -60,6 +61,8 @@ public class Program
 
     private static async Task OnReadyAsync()
     {
+        await d_client.Rest.DeleteAllGlobalCommandsAsync();
+
         IReadOnlyList<ApplicationCommandProperties> globalCommands = t_commandManager.GetCommands();
         foreach (ApplicationCommandProperties command in globalCommands)
             await d_client.Rest.CreateGlobalCommand(command);
