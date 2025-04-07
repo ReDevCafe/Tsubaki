@@ -33,7 +33,6 @@ namespace Command.Test
             if(userData == null) return;
 
             int level = userData.experience.Level;
-            ulong exp = userData.experience.Exp;
             ulong expToNextLevel = (ulong)(100 * Math.Pow(level, 1.7) + 100);
 
             var embed = new EmbedBuilder()
@@ -43,7 +42,7 @@ namespace Command.Test
                     .WithUrl($"https://discordlookup.com/user/{user.Id}")
                 )
                 .WithTitle($"{user.Username}'s Level")
-                .WithDescription($"📊 **Level:** {level}\n🌟 **EXP:** {exp} / {expToNextLevel}")
+                .WithDescription($"📊 **Level:** {level}\n🌟 **EXP:** {userData.experience.Exp} / {expToNextLevel}")
                 .WithColor(Color.Gold)
                 .WithThumbnailUrl(user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
                 .WithFooter(new EmbedFooterBuilder()
