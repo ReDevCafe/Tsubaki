@@ -11,8 +11,11 @@ namespace Logging
         {
             if (args[0] is SocketUser before && args[1] is SocketUser after)
             {
-                if (before == null || after == null)
+                if (before == null || after == null || after is not IGuildUser guildUser)
                     return;
+
+                ulong id = Database.Instance.Guild(guildUser.Guild.Id).LogChannelId;
+                ITextChannel logChannel = await guildUser.Guild.GetTextChannelAsync(id);
 
                 if (before.Username != after.Username)
                 {
@@ -23,16 +26,8 @@ namespace Logging
                         Color.Magenta
                     ).Build();
                     
-                    if (after is IGuildUser guildUser)
-                    {
-                        ulong id = Database.Instance.Guild(guildUser.Guild.Id).LogChannelId;
-                        ITextChannel logChannel = await guildUser.Guild.GetTextChannelAsync(id);
-                        
-                        if (logChannel != null)
-                        {
-                            await logChannel.SendMessageAsync(embed: embed);
-                        }
-                    }
+                    if (logChannel != null)
+                        await logChannel.SendMessageAsync(embed: embed);
                 }
 
                 if (before.GetAvatarUrl() != after.GetAvatarUrl())
@@ -44,16 +39,9 @@ namespace Logging
                         Color.Teal,
                         true
                     ).Build();
-                
-                    if (after is not IGuildUser guildUser) return;
-                    
-                    ulong id = Database.Instance.Guild(guildUser.Guild.Id).LogChannelId;
-                    ITextChannel logChannel = await guildUser.Guild.GetTextChannelAsync(id);
                     
                     if (logChannel != null)
-                    {
                         await logChannel.SendMessageAsync(embed: embed);
-                    }
                 }
             }
         }

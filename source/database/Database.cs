@@ -76,7 +76,7 @@ public class Database
         try
         {
             var filter = Builders<GuildData>.Filter.Eq("_id", guildId);
-        mongoCollection.ReplaceOne(filter, data);
+            mongoCollection.ReplaceOne(filter, data);
         }
         catch (Exception e)
         {

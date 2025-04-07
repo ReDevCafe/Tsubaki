@@ -21,9 +21,7 @@ public class GuildData
 
 
     public UserData User(ulong userID) => 
-        Users.TryGetValue(userID.ToString(), out UserData user) 
-        ? user 
-        : null;
+        Users.GetValueOrDefault(userID.ToString());
 
     public void addUser(ulong userID)
     {
