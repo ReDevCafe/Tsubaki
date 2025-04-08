@@ -69,7 +69,20 @@ public class Program
 
     private static async Task OnDisconnectedAsync(Exception exception)
     {
-        Logger.Instance.Dispose();
+        await Task.Delay(500);
+
+        try
+        {
+            await d_client.StartAsync();
+        }
+        catch(Exception e)
+        {
+            Logger.Instance.Log(LogLevel.Fatal, $"FAILED TO RECONNECT, STOPPING. {e.StackTrace}");
+            Logger.Instance.Dispose();
+
+            Environment.Exit(e.HResult);
+        }
+
         await Task.CompletedTask;
     }
 
