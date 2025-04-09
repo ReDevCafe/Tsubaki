@@ -25,6 +25,10 @@ namespace Command
             RegisterCommand(new ServerSetup());            
             RegisterCommand(new MongoDebug());
             RegisterCommand(new ExperienceInfo());
+
+            RegisterCommand(new Mute());
+            RegisterCommand(new Kick());
+            RegisterCommand(new Ban());
         }
 
         private void RegisterCommand(ICommand command)
@@ -44,5 +48,6 @@ namespace Command
         {
             return commands.Values.Select(c => c.CommandProperties).ToList();
         }
+
     }
 }
