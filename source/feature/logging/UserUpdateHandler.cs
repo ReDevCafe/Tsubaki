@@ -11,8 +11,11 @@ namespace Logging
         {
             if (args[0] is SocketUser before && args[1] is SocketUser after)
             {
-                if (before == null || after == null)
+                if (before == null || after == null || after is not IGuildUser guildUser)
                     return;
+
+                ulong id = Database.Instance.Guild(guildUser.Guild.Id).LogChannelId;
+                ITextChannel logChannel = await guildUser.Guild.GetTextChannelAsync(id);
 
                 if (before.Username != after.Username)
                 {
@@ -22,8 +25,9 @@ namespace Logging
                         after,
                         Color.Magenta
                     ).Build();
-                
-                    await Program.logChannel.SendMessageAsync(embed: embed);
+                    
+                    if (logChannel != null)
+                        await logChannel.SendMessageAsync(embed: embed);
                 }
 
                 if (before.GetAvatarUrl() != after.GetAvatarUrl())
@@ -35,8 +39,9 @@ namespace Logging
                         Color.Teal,
                         true
                     ).Build();
-                
-                    await Program.logChannel.SendMessageAsync(embed: embed);
+                    
+                    if (logChannel != null)
+                        await logChannel.SendMessageAsync(embed: embed);
                 }
             }
         }

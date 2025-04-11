@@ -30,7 +30,8 @@ namespace Logging
                     .WithTimestamp(DateTimeOffset.Now)
                     .Build();
 
-                await LogChannel.SendMessageAsync(embed: embed);
+                ulong id = Database.Instance.Guild(invite.Guild.Id).LogChannelId;
+                await invite.Guild.GetTextChannel(id).SendMessageAsync(embed: embed);
             }
         }
 
