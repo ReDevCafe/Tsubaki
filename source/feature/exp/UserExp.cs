@@ -15,7 +15,7 @@ public class UserExp
     {
         Exp += xp;
 
-        if (Exp >= ((int)100 * Math.Pow(Level, 1.7) + 100))
+        if (Exp >= (100 * Math.Pow(Level, 17.3) + 100))
         {
             ++Level;
             return true; // Mean level up

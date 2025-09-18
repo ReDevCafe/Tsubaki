@@ -6,6 +6,7 @@ using Command.Release;
 using Command.Test;
 using Discord;
 using Discord.WebSocket;
+using Maintenance;
 
 namespace Command
 {
@@ -30,6 +31,7 @@ namespace Command
         private void RegisterCommand(ICommand command)
         {
             commands[command.Name] = command;
+            Logger.Instance.Log(LogLevel.Info, $"Command registered: {command.Name}");
         }
 
         public async Task HandleCommandAsync(SocketSlashCommand command)
@@ -44,6 +46,25 @@ namespace Command
         {
             return commands.Values.Select(c => c.CommandProperties).ToList();
         }
+
+        public async Task RegisterGuildCommands(SocketGuild guild)
+        {
+            foreach (var command in commands)
+            {
+                try
+                {
+                    await guild.CreateApplicationCommandAsync(command.Value.CommandProperties);
+                }
+                catch (Exception e)
+                {
+                    Logger.Instance.Log(LogLevel.Error, $"Failed to create command {command.Value.CommandProperties.Name} in guild {guild.Id}: {e.Message}");
+                }
+            }
+
+            Logger.Instance.Log(LogLevel.Info, $"Commands registered for guild {guild.Id}");
+        }
+
+
 
     }
 }

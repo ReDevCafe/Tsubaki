@@ -17,12 +17,12 @@ public class Program
     public static Database database;
     public static ConfigFile configuration;
     
-    protected static CommandManager t_commandManager = new();
+    public readonly static CommandManager t_commandManager = new();
 
     public static async Task Main()
     {
         configuration = JsonConvert.DeserializeObject<ConfigFile>(File.ReadAllText("config.json"));
-        Logger.Instance.Configure("logs.txt", configuration.MinLogLevel, configuration.LogToConsole);
+        Logger.Instance.Configure("logs.txt", configuration.MinLogLevel);
 
         if (configuration.CacheSize < 0)
         {
@@ -32,7 +32,8 @@ public class Program
 
         d_config = new DiscordSocketConfig {
             GatewayIntents = GatewayIntents.All, // un peu la flemme mais apres on pourra def les vrai autorisations 
-            MessageCacheSize = configuration.CacheSize
+            MessageCacheSize = configuration.CacheSize,
+            UseInteractionSnowflakeDate = false
         };
 
         if (string.IsNullOrEmpty(configuration.Token))
@@ -56,24 +57,24 @@ public class Program
 
         d_client.Disconnected += OnDisconnectedAsync;
 
+        Logger.Instance.Log(LogLevel.Info, "Bot started successfully, waiting for events...");
         await Task.Delay(-1);
     }
 
+    
     private static async Task OnReadyAsync()
     {
-        await d_client.Rest.DeleteAllGlobalCommandsAsync();
+        var tasks = d_client.Guilds.Select(async guild =>
+        {
+            await t_commandManager.RegisterGuildCommands(guild);
+        });
 
-        IReadOnlyList<ApplicationCommandProperties> globalCommands = t_commandManager.GetCommands();
-        foreach (ApplicationCommandProperties command in globalCommands)
-            await d_client.Rest.CreateGlobalCommand(command);
-
-        Logger.Instance.Log(LogLevel.Info, "Slash command registered");
+        await Task.WhenAll(tasks);
+        Logger.Instance.Log(LogLevel.Info, "Guild commands registered successfully");
     }
 
     private static async Task OnDisconnectedAsync(Exception exception)
     {
-        await Task.Delay(500);
-
         try
         {
             await d_client.StartAsync();

@@ -53,7 +53,7 @@ public class Database
             Logger.Instance.Log(LogLevel.Fatal, $"Error adding guild to database: {ex.Message}");
             guildData = null;
         }
-
+        
         return guildData;
     }
 
@@ -69,8 +69,6 @@ public class Database
         mongoCollection.UpdateOne(filter, update);
     }
 
-
-
     public void UpdateMongoGuildData(ulong guildId, GuildData data)
     {
         try
@@ -83,6 +81,5 @@ public class Database
             Debug.WriteLine(e);
             throw;
         }
-        
     }
 }

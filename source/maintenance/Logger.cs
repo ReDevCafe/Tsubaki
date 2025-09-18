@@ -8,11 +8,12 @@ namespace Maintenance
 {
     public enum LogLevel
     {
+        Debug,
         Info,
         Warning,
         Error,
         Fatal,
-        Debug,
+
     }
 
     public class Logger
@@ -51,7 +52,8 @@ namespace Maintenance
 
         public void Log(LogLevel level, string message)
         {
-            if (level < minimumLevel)
+        
+            if (level < minimumLevel) 
                 return;
 
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
